@@ -7,9 +7,9 @@
 				<view class="text-white text-center mt-5" style="font-size: 16px;height: 40px; line-height: 40px;">我的</view>
 				<view class="d-flex a-center j-sb mt-3 pt-2">
 					<view class="d-flex a-center ml-3" style="width:66%;">
-						<view><image class="photo" src="../../static/images/about-img1.png" mode=""></image></view>
+						<view class="photo" style="overflow: hidden;"><open-data type="userAvatarUrl"></open-data></view>
 						<view style="width: 70%;">
-							<view class="font-32 font-weight">哆啦A梦</view>
+							<view class="font-32 font-weight"><open-data type="userNickName"></open-data></view>
 							<view class="font-26 mt-1">15623232323</view>
 						</view>
 					</view>

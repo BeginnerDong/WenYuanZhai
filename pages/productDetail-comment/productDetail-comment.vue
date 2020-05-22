@@ -6,19 +6,19 @@
 		<!-- 评价 -->
 		<view class="px-3">
 			<view class="detail_pjLis">
-				<view class="item" v-for="(item,index) in messageData" :key="index">
+				<view class="item" v-for="(item,index) in mainData" :key="index">
 					<view class="d-flex j-sb a-center pb-1 font-24">
 						<view class="d-flex a-center">
-							<view class="photo mr-1"><image src="../../static/images/goodsl-img4.png" mode=""></image></view>
-							<view class="name color6">哆啦A梦</view>		
+							<view class="photo mr-1"><image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image></view>
+							<view class="name color6">{{item.title!=''?item.title:'用户'+item.user_no}}</view>		
 						</view>
-						<view class="time color9">2020-03-17</view>
+						<view class="time color9">{{item.create_time}}</view>
 					</view>
-					<view class="text font-26 pt-1">根据瑞灵活赶紧来都搞好了电话沟通各环节的反馈给换了多个黑客帝国</view>
+					<view class="text font-26 pt-1">{{item.description}}</view>
 					<view class="picLis d-flex a-start flex-wrap">
-						<view class="pic"><image src="../../static/images/goodsl-img5.png" mode=""></image></view>
-						<view class="pic"><image src="../../static/images/goodsl-img5.png" mode=""></image></view>
-						<view class="pic"><image src="../../static/images/goodsl-img5.png" mode=""></image></view>
+						<view class="pic" v-for="c_item in item.bannerImg">
+							<image :src="c_item.url" mode=""></image>
+						</view>
 					</view>
 				</view>
 			</view>
@@ -36,21 +36,51 @@
 				showView: false,
 				wx_info:{},
 				is_show:false,
-				messageData:3
+				pingjiaData:[{},{},{},{}],
+				mainData:[]
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			self.product_no = options.product_no;
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
+			
 			getMainData() {
 				const self = this;
-				console.log('852369')
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id: 2,
+					product_no :self.product_no,
+					type:1,
+					user_type:0
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.mainData.push.apply(self.mainData, res.info.data);
+					}
+					console.log('23',res.info.total)
+					self.totalMessage = res.info.total;
+					console.log('self.mainData', self.mainData)
+					self.$Utils.finishFunc('getMainData');
+				};
+				self.$apis.messageGet(postData, callback);
+			},
 		}
 	};
 </script>

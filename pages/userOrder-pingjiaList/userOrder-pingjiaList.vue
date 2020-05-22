@@ -1,31 +1,37 @@
 <template>
 	<view>
-		<view class="mx-3 mt-3">
-			<view class="proRow">
-				<view class="item mb-3" v-for="(item,index) in mainData" :key="index">
-					<view class="font-24 d-flex j-sb a-center pb-2 border-bottom">
-						<view class="color9">订单编号:152565622323</view>
-						<view class="red">已提货</view>
-					</view>
-					<view class="d-flex j-sb a-center py-2 inforLine">
-						<view class="picBox d-flex a-center flex-wrap">
-							<image src="../../static/images/shopping-img.png" mode=""></image>
+		<view class="proRow mt-3">
+			<view class="item mb-2 rounded10" >
+				<view class="" v-for="(item,index) in mainData.child" :key="index">
+					<view class="d-flex j-sb a-center mb-3">
+						<view class="pic">
+							<image :src="item.orderItem&&item.orderItem[0]&&item.orderItem[0].snap_product&&item.orderItem[0].snap_product.product&&
+							item.orderItem[0].snap_product.product.mainImg&&item.orderItem[0].snap_product.product.mainImg[0]?item.orderItem[0].snap_product.product.mainImg[0].url:''" mode=""></image>
+							<view class="imgTit text-white font-22 text-center avoidOverflow px-1">本商品由生灵商行专供</view>
 						</view>
-						<view class="rr d-flex j-end a-center">
-							<image class="arrowR" src="../../static/images/about-icon4.png" mode=""></image>
+						<view class="infor">
+							<view class="avoidOverflow font-28">{{item.orderItem&&item.orderItem[0]&&item.orderItem[0].snap_product&&item.orderItem[0].snap_product.product?item.orderItem[0].snap_product.product.title:''}}</view>
+							<view class="d-flex font-24 color6 mt-1">
+								<view class="specsBtn mr-1">{{item.orderItem&&item.orderItem[0]&&item.orderItem[0].snap_product&&item.orderItem[0].snap_product?item.orderItem[0].snap_product.title:''}}</view>
+							</view>
+							<view class="B-price">
+								<view class=""></view>
+								<view class=" d-flex j-sb a-center">
+									<view class="price font-26">{{item.unit_price}}</view>
+									<view class="font-26">×{{item.count}}</view>
+								</view>
+							</view>
 						</view>
 					</view>
-					<view class=" d-flex j-sb a-center py-3 border-top">
-						<view class="font-24 color9">2020.04.30 10:02</view>
-						<view>共3件商品 合计:<span class="price">56</span></view>
+					<view class="underBtn d-flex j-end a-center pt-3 border-top" v-if="item.isremark==0">
+						<view class="Bbtn"  :data-id="item.id" @click="Router.navigateTo({route:{path:'/pages/userOrder-pingjia/userOrder-pingjia?id='+$event.currentTarget.dataset.id}})">去评价</view>
 					</view>
-					<view class="underBtn d-flex j-end a-center pt-3 border-top">
-						<view class="Bbtn"  @click="Router.navigateTo({route:{path:'/pages/userOrder-pingjia/userOrder-pingjia'}})">去评价</view>
+					<view class="underBtn d-flex j-end a-center pt-3 border-top" v-if="item.isremark==1">
+						<view class="Bbtn">已评价</view>
 					</view>
-				</view>	
-			</view>	
-		</view>
-		
+				</view>
+			</view>
+		</view>	
 	</view>
 </template>
 
@@ -34,17 +40,35 @@
 		data() {
 			return {
 				Router:this.$Router,
-				showView: false,
-				score:'',
-				wx_info:{},
-				mainData:3
+				mainData:{}
 			}
 		},
-		onLoad() {
+		
+		onLoad(options) {
 			const self = this;
-			//self.$Utils.loadAll(['getMainData'], self);
+			self.id = options.id;
+			self.$Utils.loadAll(['getMainData'], self);
 		},
+		
 		methods: {
+			
+			getMainData() {
+				const self = this;
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.searchItem = {
+					id: self.id,
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.mainData = res.info.data[0];
+					};
+					console.log('self.mainData', self.mainData)
+					self.$Utils.finishFunc('getMainData');
+				};
+				self.$apis.orderGet(postData, callback);
+			},
+			
 		}
 	};
 </script>

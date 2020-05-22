@@ -4,13 +4,13 @@
 		<view class="homeHead position-relative">
 			<view class="px-3 py-3 d-flex text-white GpsAdrs a-start">
 				<view class="GpsIcon mr-1"><image src="../../static/images/home-icon.png" mode=""></image></view>
-				<view>高新大都会</view>
+				<view>{{city}}</view>
 			</view>
 			<view class="banner-box px-3" style="margin-top: -160rpx;" >
 				<swiper class="swiper-box rounded10 overflow-h" indicator-dots="true" autoplay="true" interval="3000" duration="1000" indicator-color="#d89c9c" indicator-active-color="#db1b1b">
-					<block v-for="(item,index) in labelData" :key="index">
+					<block v-for="(item,index) in sliderData.mainImg" :key="index">
 						<swiper-item class="swiper-item">
-							<image :src="item" class="slide-image" />
+							<image :src="item.url" class="slide-image" />
 						</swiper-item>
 					</block>
 				</swiper>
@@ -19,28 +19,28 @@
 		
 		<view class="px-3 mt-4">
 			<view class="d-flex  a-center">
-				<view class="title-xian mr-4 pb-2" :class="curr==1?'on':''" @click="currChange(1)">热菜</view>
-				<view class="title-xian mr-4 pb-2" :class="curr==2?'on':''" @click="currChange(2)">凉菜</view>
-				<view class="title-xian mr-4 pb-2" :class="curr==3?'on':''" @click="currChange(3)">主食</view>
+				<view class="title-xian mr-4 pb-2" v-for="(item,index) in labelData" :key="index"
+				:class="curr==index?'on':''" @click="currChange(index)">{{item.title}}</view>
 			</view>
 			
 			<view class="productList">
-				<view class="item py-3 border-bottom" v-for="(item,index) in productData" :key="index" @click="Router.navigateTo({route:{path:'/pages/productDetail/productDetail'}})">
+				<view class="item py-3 border-bottom" v-for="(item,index) in mainData" :key="index" :data-id="item.id"
+				@click="Router.navigateTo({route:{path:'/pages/productDetail/productDetail?id='+$event.currentTarget.dataset.id}})">
 					<view class="pic rounded10 overflow-h position-relative">
-						<view class="fixState no" style="background-color: #7d7d7d;">不可买</view>
-						<view class="fixState"  style="background-color: #37c25b;">可买</view>
-						<image class="img" src="../../static/images/home-img.png" mode=""></image>
+						<view class="fixState no" style="background-color: #7d7d7d;" v-if="!canBuy">不可买</view>
+						<view class="fixState"  style="background-color: #37c25b;" v-if="canBuy">可买</view>
+						<image class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image>
 						<view class="imgTit text-white font-23 text-center avoidOverflow px-3">本商品由生灵商行专供</view>
 					</view>
 					<view class="infor mt-3">
-						<view class="tit avoidOverflow2 font-30 font-weight">墨西哥牛油果8枚单果200g左右</view>
-						<view class="price font-32 font-weight mt-1">56</view>
+						<view class="tit avoidOverflow2 font-30 font-weight">{{item.title}}</view>
+						<view class="price font-32 font-weight mt-1">{{item.price}}</view>
 					</view>
 				</view>
 			</view>
 			
 			<!-- 无数据 -->
-			<view class="nodata"><image src="../../static/images/nodata.png" mode=""></image></view>
+			<view class="nodata" v-if="mainData.length==0"><image src="../../static/images/nodata.png" mode=""></image></view>
 			
 		</view>
 		
@@ -75,37 +75,145 @@
 		data() {
 			return {
 				Router:this.$Router,
-				is_show: false,
-				wx_info:{},
-				is_show:false,
-				labelData: [
-					"../../static/images/home-banner.png",
-					"../../static/images/home-banner.png",
-					"../../static/images/home-banner.png"
-				],
-				curr:1,
-				productData:4
+				curr:0,
+				mainData:[],
+				labelData:[],
+				sliderData:{},
+				city:'',
+				canBuy:false
 			}
 		},
 		onLoad() {
 			const self = this;
-			// self.$Utils.loadAll(['getMainData'], self);
+			
+			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+			self.$Utils.loadAll(['getUserData','getLocation','getLabelData','getSliderData'], self);
 		},
+		
+		onReachBottom() {
+			console.log('onReachBottom')
+			const self = this;
+			if (!self.isLoadAll && uni.getStorageSync('loadAllArray')) {
+				self.paginate.currentPage++;
+				self.getMainData()
+			};
+		},
+		
 		methods: {
+			
+			getUserData() {
+				var self = this;
+				var postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				var callback = function(res) {
+					if (res.info.data.length > 0 && res.info.data[0]) {
+						self.userData = res.info.data[0]
+						var d = new Date();
+						var h = d.getHours();
+						if(h>uni.getStorageSync('user_info').thirdApp.start_time&&h<uni.getStorageSync('user_info').thirdApp.end_time){
+							self.canBuy = true
+						}
+					};
+					self.$Utils.finishFunc('getUserData');
+				};
+				self.$apis.userGet(postData, callback);
+			},
+			
+			getLocation() {
+				const self = this;
+				const callback = (res) => {
+					if (res) {
+						console.log('res', res)
+						/* if(res.authSetting){
+							self.data.is_show=true;
+							self.setData({
+								is_show:self.data.is_show
+							})
+							return
+						} */
+						self.city = res.formatted_addresses.recommend
+					};
+					self.$Utils.finishFunc('getLocation');
+				};
+				self.$Utils.getLocation('reverseGeocoder', callback);
+			},
+			
 			currChange(curr){
 				const self = this;
 				if(curr!=self.curr){
-					self.curr = curr
+					self.curr = curr;
+					self.currentId = self.labelData[self.curr].id;
+					self.getMainData(true)
 				}
 			},
 			
-			getMainData() {
+			getMainData(isNew) {
+				var self = this;
+				if (isNew) {
+					self.mainData = [];
+					self.paginate = {
+						count: 0,
+						currentPage: 1,
+						pagesize: 10,
+						is_page: true,
+					}
+				};
+				var postData = {};
+				postData.paginate = self.$Utils.cloneForm(self.paginate);
+				postData.searchItem = {
+					thirdapp_id: 2,
+					type:1,
+					category_id:self.currentId
+				};
+				postData.order = {
+					listorder: 'desc'
+				};
+				var callback = function(res) {
+					if (res.info.data.length > 0 && res.info.data[0]) {
+						self.mainData.push.apply(self.mainData, res.info.data);
+						
+					};
+					self.$Utils.finishFunc('getLabelData');
+				};
+				self.$apis.productGet(postData, callback);
+			},
+			
+			getLabelData() {
 				const self = this;
-				console.log('852369')
 				const postData = {};
-				postData.tokenFuncName = 'getProjectToken';
-				self.$apis.orderGet(postData, callback);
-			}
+				postData.searchItem = {
+					thirdapp_id: 2,
+					type:3,
+				};
+				postData.order = {
+					listorder: 'desc'
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.labelData.push.apply(self.labelData, res.info.data);
+						self.currentId = self.labelData[0].id;
+						self.getMainData(true)
+					}
+				};
+				self.$apis.labelGet(postData, callback);
+			},
+			
+			getSliderData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					thirdapp_id: 2,
+					title:"首页轮播"
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.sliderData = res.info.data[0]
+					}
+					self.$Utils.finishFunc('getSliderData');
+				};
+				self.$apis.labelGet(postData, callback);
+			},
+			
 		}
 	};
 </script>

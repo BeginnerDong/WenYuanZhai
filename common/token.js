@@ -270,7 +270,7 @@ class Token {
             uni.removeStorageSync('merchant_token');
             uni.removeStorageSync('merchant_info');
             uni.redirectTo({
-              url: '/pages/login/login'
+              url: '/pages/storeLogin/storeLogin'
             });
         }else{
             return uni.getStorageSync('merchant_token');
