@@ -44,7 +44,9 @@
 		
 		<!-- 无数据 -->
 		<view class="nodata" v-if="mainData.length==0"><image src="../../static/images/nodata.png" mode=""></image></view>
-		
+		<view class="submitbtn" style="position: fixed;bottom: 0;width: 100%;">
+			<view class="btn" style="width: 100%;border-radius: 0;" @click="loginOff">退出登录</view>
+		</view>
 	</view>
 </template>
 
@@ -87,6 +89,13 @@
 		},
 		
 		methods: {
+			
+			loginOff(){
+				const self = this;
+				uni.removeStorageSync('merchant_info');
+				uni.removeStorageSync('merchant_token');
+				self.Router.redirectTo({route:{path:'/pages/user/user'}})
+			},
 			
 			scanCode(){
 				const self = this;

@@ -227,6 +227,7 @@
 				}
 				var data = {
 					snap_address:self.shopData,
+					shop_no:self.shopData.user_no
 				};
 				var orderList = []
 				for (var i = 0; i < self.mainData.length; i++) {
@@ -271,7 +272,7 @@
 						for (var i = 0; i < orderList.length; i++) {
 							for (var j = 0; j < array.length; j++) {
 								if(orderList[i].sku_id == array[j].sku[array[j].skuIndex].id){
-									self.$Utils.delStorageArray('cartData', orderList[i], 'id');
+									self.$Utils.delStorageArray('cartData', array[j], 'id');
 								}
 							}
 						};

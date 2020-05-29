@@ -30,7 +30,7 @@
 						<view class="fixState no" style="background-color: #7d7d7d;" v-if="!canBuy">不可买</view>
 						<view class="fixState"  style="background-color: #37c25b;" v-if="canBuy">可买</view>
 						<image class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image>
-						<view class="imgTit text-white font-23 text-center avoidOverflow px-3">本商品由生灵商行专供</view>
+						<!-- <view class="imgTit text-white font-23 text-center avoidOverflow px-3">本商品由生灵商行专供</view> -->
 					</view>
 					<view class="infor mt-3">
 						<view class="tit avoidOverflow2 font-30 font-weight">{{item.title}}</view>
@@ -85,9 +85,14 @@
 		},
 		onLoad() {
 			const self = this;
+			const callback = (res) => {
+				self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
+				self.$Utils.loadAll(['getUserData','getLocation','getLabelData','getSliderData'], self);
+			};
+			self.$Token.getProjectToken(callback, {
+				refreshToken: true
+			})
 			
-			self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-			self.$Utils.loadAll(['getUserData','getLocation','getLabelData','getSliderData'], self);
 		},
 		
 		onReachBottom() {

@@ -155,14 +155,14 @@
 		<!-- 商品不可购买弹框 -->
 		<view class="yushouText text-center" style="height: 780rpx;" v-show="is_NoBuyShow">
 			<view class="closebtn" @click="NoBuyClose">×</view>
-			<view class="pt-4">该商品不可购买，您可以购买其他的商品</view>
+			<view class="pt-4">店家已休息，明天再来购买吧</view>
 			<view class="j-center d-flex a-center">
 				<image style="width: 330rpx;height: 330rpx;margin: 70rpx auto 90rpx auto;" src="../../static/images/goodsl-img3.png"
 				 mode=""></image>
 			</view>
-			<view class="submitbtn">
+			<!-- <view class="submitbtn">
 				<view class="btn" style="border-radius: 10rpx;">去看看</view>
-			</view>
+			</view> -->
 		</view>
 		<hchPoster ref="hchPoster" :canvasFlag.sync="canvasFlag" @cancel="canvasCancel" :posterObj.sync="posterData" />
 		<view :hidden="canvasFlag">
@@ -302,10 +302,9 @@
 
 			createCanvasImageEvn() {
 				const self = this;
-				console.log(self.QrData.info.url)
-				console.log(self.mainData.mainImg[0].url)
+				
 				Object.assign(this.posterData, {
-					url: self.mainData.mainImg[0].url, //商品主图
+					url: self.mainData.mainImg[0]?self.mainData.mainImg[0].url:'', //商品主图
 					icon: 'https://img0.zuipin.cn/mp_zuipin/poster/hch-hyj.png', //醉品价图标
 					title: self.mainData.title, //标题
 					discountPrice: self.mainData.price, //折后价格
