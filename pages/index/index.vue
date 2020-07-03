@@ -24,17 +24,28 @@
 			</view>
 			
 			<view class="productList">
-				<view class="item py-3 border-bottom" v-for="(item,index) in mainData" :key="index" :data-id="item.id"
+				<view class="item py-3 border-bottom" v-for="(item,index) in mainData" :key="index">
+					<view class="pic rounded10 overflow-h position-relative" :data-id="item.id"
 				@click="Router.navigateTo({route:{path:'/pages/productDetail/productDetail?id='+$event.currentTarget.dataset.id}})">
-					<view class="pic rounded10 overflow-h position-relative">
 						<view class="fixState no" style="background-color: #7d7d7d;" v-if="!canBuy">不可买</view>
 						<view class="fixState"  style="background-color: #37c25b;" v-if="canBuy">可买</view>
 						<image class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image>
 						<!-- <view class="imgTit text-white font-23 text-center avoidOverflow px-3">本商品由生灵商行专供</view> -->
 					</view>
 					<view class="infor mt-3">
-						<view class="tit avoidOverflow2 font-30 font-weight">{{item.title}}</view>
-						<view class="price font-32 font-weight mt-1">{{item.price}}</view>
+						<view  class="d-flex mt-1 a-center">
+							<view class="tit avoidOverflow2 font-30 font-weight" style="width: 90%;">{{item.title}}</view>
+							<view style="width: 40rpx;height: 40rpx;justify-content: flex-end;display: flex;" @click="addCar(index)">
+								<image src="../../static/images/home-icon9.png" mode=""></image>
+							</view>
+						</view>
+						
+						<view class="d-flex mt-1 a-center">
+							<view class="price font-32 font-weight">{{item.price}}</view>
+							<view style="font-size:26rpx;color:#666;margin-left: 20rpx;">库存：{{item.stock}}</view>
+							<view style="font-size:26rpx;color:#666;margin-left: 20rpx;">销量：{{item.sale_count}}</view>
+						</view>
+						
 					</view>
 				</view>
 			</view>
@@ -105,6 +116,33 @@
 		},
 		
 		methods: {
+			
+			
+			addCar(index){
+				const self = this;
+				if (!self.canBuy) {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('商品暂不可购买', 'none');
+					return
+				};
+				var obj = self.mainData[index];
+				self.mainData[index].skuIndex = 0;
+				var array = self.$Utils.getStorageArray('cartData');
+				for (var i = 0; i < array.length; i++) {
+					if (array[i].sku[array[i].skuIndex].id == self.mainData[index].sku[0].id) {
+						var target = array[i]
+					}
+				}
+				if (target) {
+					target.count = target.count + 1
+				} else {
+					var target = self.mainData[index];
+					target.count = 1;
+					target.isSelect = true;
+				}
+				self.$Utils.showToast('加入成功', 'none');
+				self.$Utils.setStorageArray('cartData', target, 'id', 999);
+			},
 			
 			getUserData() {
 				var self = this;

@@ -14,13 +14,8 @@
 				<view class="mt-1">{{shopData.address}}</view>
 			</view>
 			<view class="px-3 py-3" v-else @click="Router.navigateTo({route:{path:'/pages/zitiAddress/zitiAddress'}})">
-				<!-- <view class="d-flex j-sb a-center mt-1">
-					<view class="mr-3 font-30">门店名称门店名称</view>
-					<view class="font-26">15689562352</view>
-				</view> -->
 				<view class="mt-1">请选择自提门店</view>
 			</view>
-			<!-- <view style="width: 100%;height: 8rpx;"><image src="../../static/images/the-orderl-img.png" mode=""></image></view> -->
 		</view>
 		<view class="bg-white overflow-h mx-3">
 			<view class="px-3 py-3 border-bottom font-24 color6">收货人信息</view>

@@ -399,9 +399,9 @@
 
 			addCar() {
 				const self = this;
-				if (self.mainData.is_notBuying) {
+				if (!self.canBuy) {
 					uni.setStorageSync('canClick', true);
-					self.$Utils.showToast('商品预售中', 'none');
+					self.NoBuyShow();
 					return
 				};
 				var obj = self.mainData;

@@ -10,7 +10,7 @@
 						<view class="photo" style="overflow: hidden;"><open-data type="userAvatarUrl"></open-data></view>
 						<view style="width: 70%;">
 							<view class="font-32 font-weight"><open-data type="userNickName"></open-data></view>
-							<view class="font-26 mt-1">15623232323</view>
+							<!-- <view class="font-26 mt-1">15623232323</view> -->
 						</view>
 					</view>
 					<view class="ewmBtn d-flex j-center a-center px-1 font-24" @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder'}})"><image class="mr-1" style="width: 30rpx;height: 30rpx;" src="../../static/images/about-icon.png" mode=""></image>提货二维码</view>
