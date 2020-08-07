@@ -24,7 +24,7 @@
 			</view>
 			
 			<view class="productList">
-				<view class="item py-3 border-bottom" v-for="(item,index) in mainData" :key="index">
+				<view class="item pb-3 mt-3 border-bottom shadow rounded10 overflow-h" v-for="(item,index) in mainData" :key="index">
 					<view class="pic rounded10 overflow-h position-relative" :data-id="item.id"
 				@click="Router.navigateTo({route:{path:'/pages/productDetail/productDetail?id='+$event.currentTarget.dataset.id}})">
 						<view class="fixState no" style="background-color: #7d7d7d;" v-if="!canBuy">不可买</view>
@@ -32,18 +32,22 @@
 						<image class="img" :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image>
 						<!-- <view class="imgTit text-white font-23 text-center avoidOverflow px-3">本商品由生灵商行专供</view> -->
 					</view>
-					<view class="infor mt-3">
-						<view  class="d-flex mt-1 a-center">
-							<view class="tit avoidOverflow2 font-30 font-weight" style="width: 90%;">{{item.title}}</view>
-							<view style="width: 40rpx;height: 40rpx;justify-content: flex-end;display: flex;" @click="addCar(index)">
-								<image src="../../static/images/home-icon9.png" mode=""></image>
+					<view class="infor mt-3 px-3 d-flex j-sb a-center">
+						<view>
+							<view  class="d-flex mt-1 a-center">
+								<view class="tit avoidOverflow2 font-30 font-weight" style="width: 90%;">{{item.title}}</view>
+								
+							</view>
+							
+							<view class="d-flex mt-1 a-center">
+								<view class="price font-32 font-weight">{{item.price}}</view>
+								<!-- <view style="font-size:26rpx;color:#666;margin-left: 20rpx;">库存：{{item.stock}}</view> -->
+								<view style="font-size:26rpx;color:#666;margin-left: 20rpx;">销量：{{item.sale_count}}</view>
 							</view>
 						</view>
 						
-						<view class="d-flex mt-1 a-center">
-							<view class="price font-32 font-weight">{{item.price}}</view>
-							<!-- <view style="font-size:26rpx;color:#666;margin-left: 20rpx;">库存：{{item.stock}}</view> -->
-							<view style="font-size:26rpx;color:#666;margin-left: 20rpx;">销量：{{item.sale_count}}</view>
+						<view style="width: 80rpx;height: 80rpx;justify-content: flex-end;display: flex;" @click="addCar(index)">
+							<image src="../../static/images/home-icon9.png" mode=""></image>
 						</view>
 						
 					</view>
@@ -270,6 +274,8 @@
 	.homeHead{}
 	.GpsAdrs{background-color: #222;height: 255rpx;}
 	.GpsIcon{width: 30rpx;height: 36rpx;}
+	
+	/* .infor image{width: 100rpx;height: 100rpx;} */
 	
 	.swiper-box{height: 360rpx;box-shadow: 0 3px 8px rgb(222, 163, 163,0.5);}
 	
