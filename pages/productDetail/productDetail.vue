@@ -18,8 +18,8 @@
 			<view class="d-flex j-sb a-center px-3 font-24 pt-2">
 				<view style="color: #ff8c8c;">提货时间：{{pickTime}}</view>
 				<view class="color9 d-flex j-end a-center">
-					<view>销量:{{mainData.sale_count?mainData.sale_count:''}}</view>
-					<view class="ml-3">库存:{{mainData.stock?mainData.stock:''}}</view>
+					<view>销量:{{mainData.sale_count?mainData.sale_count:'0'}}</view>
+					<!-- <view class="ml-3">库存:{{mainData.stock?mainData.stock:'0'}}</view> -->
 				</view>
 			</view>
 			<view class="mx-3 font-32 font-weight pt-3">{{mainData.title}}</view>
@@ -35,7 +35,7 @@
 					<image class="moreIcon" src="../../static/images/goodsl-icon1.png" mode=""></image>
 				</view>
 			</view>
-			<view class="py-3 d-flex j-sb a-center font-26">
+			<!-- <view class="py-3 d-flex j-sb a-center font-26">
 				<view class="d-flex a-center">
 					<view class="color6 mr-3">使用方式</view>
 					<view>请查看</view>
@@ -43,7 +43,7 @@
 				<view class="d-flex j-end a-center" @click="yushouTextShow">
 					<image class="moreIcon" src="../../static/images/goodsl-icon1.png" mode=""></image>
 				</view>
-			</view>
+			</view> -->
 		</view>
 
 		<view class=" bg-white rounded10 overflow-h mx-3 mt-3  pb-3">
@@ -78,7 +78,7 @@
 		<view class="px-3">
 			<view class="py-3 xqInfor">
 				<view class="font-30 pb-3 font-weight">详情描述</view>
-				<view class="cont fs14 text-center">
+				<view class="cont fs14 text-center bg-white">
 					<view class="content ql-editor" style="padding:0;" v-html="mainData.content">
 					</view>
 				</view>
@@ -113,7 +113,7 @@
 				</view>
 				<view class="infor">
 					<view class="price font-weight font-36 mt-5 pt-2 mb-3">{{mainData.sku[specsCurr]?mainData.sku[specsCurr].price:''}}</view>
-					<!-- <view class="font-26">请选择规格</view> -->
+					<view class="font-26">库存：{{mainData.sku[specsCurr]?mainData.sku[specsCurr].stock:'0'}}</view>
 				</view>
 			</view>
 			<view class="mt-3">
@@ -284,8 +284,8 @@
 				const postData = {};
 				postData.tokenFuncName = 'getProjectToken'
 				postData.qrInfo = {
-					scene: self.mainData.id,
-					path: 'pages/productDetail/productDetail',
+					scene: self.id,
+					page: 'pages/productDetail/productDetail',
 				};
 				postData.output = 'url';
 				postData.ext = 'png';

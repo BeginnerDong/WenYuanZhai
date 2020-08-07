@@ -42,7 +42,7 @@
 						
 						<view class="d-flex mt-1 a-center">
 							<view class="price font-32 font-weight">{{item.price}}</view>
-							<view style="font-size:26rpx;color:#666;margin-left: 20rpx;">库存：{{item.stock}}</view>
+							<!-- <view style="font-size:26rpx;color:#666;margin-left: 20rpx;">库存：{{item.stock}}</view> -->
 							<view style="font-size:26rpx;color:#666;margin-left: 20rpx;">销量：{{item.sale_count}}</view>
 						</view>
 						

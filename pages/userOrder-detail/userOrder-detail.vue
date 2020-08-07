@@ -112,6 +112,7 @@
 				postData.tokenFuncName = 'getProjectToken';
 				postData.searchItem = {
 					id: self.id,
+					user_no:uni.getStorageSync('user_info').user_no
 				};
 				postData.getAfter = {
 					shop: {
