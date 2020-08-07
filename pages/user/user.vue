@@ -20,14 +20,14 @@
 		</view>
 		
 		<view class="myRowBetween mx-3 mt-3 bg-white rounded10 overflow-h">
-			<view class="item d-flex a-center j-sb"  @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder'}})">
+			<view class="item mx-3 d-flex a-center j-sb"  @click="Router.navigateTo({route:{path:'/pages/userOrder/userOrder'}})">
 				<view class="ll d-flex a-center">
 					<view class="icon"><image src="../../static/images/about-icon1.png" mode=""></image></view>
 					<view>我的订单</view>
 				</view>
 				<view class="rr"><image class="arrowR" src="../../static/images/about-icon4.png" mode=""></image></view>
 			</view>
-			<view class="item d-flex a-center j-sb"  @click="Router.navigateTo({route:{path:'/pages/zitiAddress/zitiAddress'}})">
+			<view class="item mx-3 d-flex a-center j-sb"  @click="Router.navigateTo({route:{path:'/pages/zitiAddress/zitiAddress'}})">
 				<view class="ll d-flex a-center">
 					<view class="icon"><image src="../../static/images/about-icon2.png" mode=""></image></view>
 					<view>自提点</view>
@@ -36,7 +36,7 @@
 			</view>
 		</view>
 		<view class="myRowBetween mx-3 mt-3 bg-white rounded10 overflow-h">
-			<view class="item d-flex a-center j-sb" @click="Router.navigateTo({route:{path:'/pages/storeLogin/storeLogin'}})">
+			<view class="item mx-3 d-flex a-center j-sb" @click="Router.navigateTo({route:{path:'/pages/storeLogin/storeLogin'}})">
 				<view class="ll d-flex a-center">
 					<view class="icon"><image src="../../static/images/about-icon3.png" mode=""></image></view>
 					<view>门店入口</view>
@@ -44,7 +44,7 @@
 				<view class="rr"><image class="arrowR" src="../../static/images/about-icon4.png" mode=""></image></view>
 			</view>
 		</view>
-		<view class="submitbtn" style="margin-top: 200rpx;">
+		<view class="submitbtn" style="margin-top: 240rpx;">
 			<view class="btn" @click="Router.redirectTo({route:{path:'/pages/index/index'}})">去购物</view>
 		</view>
 		
@@ -106,7 +106,7 @@
 	.userHead .infor{position: absolute;top: 0; right: 0; left: 0;bottom: 0;}
 	.ewmBtn{width: 200rpx;height: 60rpx;background-color: rgba(255,255,255,0.5);border-radius: 30rpx 0 0 30rpx;}
 	
-	.myRowBetween .item{padding: 30rpx 4%;}
+	.myRowBetween .item{padding: 30rpx 0;}
 	.myRowBetween .item:last-child{border-bottom: none;}
 	.myRowBetween .ll .icon{width: 50rpx;height:50rpx;margin-right: 20rpx;}
 	

@@ -26,7 +26,7 @@
 		</view>
 
 		<view class="px-3 bg-white rounded10 overflow-h mx-3 mt-3">
-			<view class="py-3 d-flex j-sb a-center font-26 border-bottom" @click="spaceShow">
+			<view class="py-3 d-flex j-sb a-center font-26" @click="spaceShow">
 				<view class="d-flex a-center">
 					<view class="color6 mr-3">规格</view>
 					<view>{{mainData.sku[specsCurr]?'已选'+mainData.sku[specsCurr].title:'选择商品规格'}}</view>
@@ -78,7 +78,7 @@
 		<view class="px-3">
 			<view class="py-3 xqInfor">
 				<view class="font-30 pb-3 font-weight">详情描述</view>
-				<view class="cont fs14 text-center bg-white">
+				<view class="cont fs14 text-center">
 					<view class="content ql-editor" style="padding:0;" v-html="mainData.content">
 					</view>
 				</view>
