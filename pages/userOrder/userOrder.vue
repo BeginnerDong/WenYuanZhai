@@ -38,6 +38,7 @@
 						<view>共{{item.child.length}}件商品 合计:<span class="price">{{item.price}}</span></view>
 					</view>
 					<view class="underBtn d-flex j-end a-center py-3 border-top"  v-if="item.pay_status==0">
+						<view class="Bbtn b-e1" @click="orderDelete(index)" >取消订单</view>
 						<view class="Bbtn mainborder"  @click="goPay(index)" >去支付</view>
 					</view>
 					<view class="underBtn d-flex j-end a-center py-3 border-top"  v-if="item.pay_status==1&&item.isremark==0&&item.transport_status==2">
@@ -198,6 +199,31 @@
 				}
 			},
 			
+			orderDelete(index){
+				const self = this;
+				uni.setStorageSync('canClick', false);
+				const postData = {};
+				postData.tokenFuncName = 'getProjectToken';
+				postData.data = {
+					status:-1,
+				};
+				postData.searchItem = {
+					id:self.mainData[index].id,
+				};
+				const callback = (data) => {
+					uni.setStorageSync('canClick', true);
+					if (data && data.solely_code == 100000) {
+						self.$Utils.showToast('操作成功','none');
+						setTimeout(function() {
+							self.getMainData(true)
+						}, 1000);
+					} else {
+						self.$Utils.showToast(data.msg,'none')
+					}
+				};
+				self.$apis.orderUpdate(postData, callback);
+			},
+			
 			orderUpdate(index) {
 				const self = this;
 				uni.setStorageSync('canClick', false);
@@ -262,6 +288,6 @@
 	
 	.proRow .item{padding: 20rpx 30rpx 0 30rpx;}
 	.orderNav .tt.on::after{bottom: 0;}
-	
+	.b-e1{border: 1px solid #e1e1e1;}
 	
 </style>

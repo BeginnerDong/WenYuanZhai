@@ -47,7 +47,7 @@
 						<view class="specsBtn mr-1">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].title:''}}</view>
 					</view>
 					<view class="d-flex j-sb B-price">
-						<view class="price font-32 font-weight">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].price:''}}</view>
+						<view class="price font-32 font-weight">{{item.product&&item.product.sku&&item.product.sku[item.skuIndex]?item.product.sku[item.skuIndex].price:item.product.price}}</view>
 						<view class="flexEnd">
 							<view class="numBox d-flex">
 								<view class="btn" @click="counter(index,'-')">-</view>
@@ -155,6 +155,7 @@
 							self.submitData.phone = res.info.data[0].phone
 							self.submitData.shop_no = self.shopData.phone
 						}
+						console.log('shopData',self.shopData)
 					}
 				};
 				self.$apis.userInfoGet(postData, callback);
@@ -195,7 +196,11 @@
 				const self = this;
 				self.totalPrice = 0;
 				for (var i = 0; i < self.mainData.length; i++) {
-					self.totalPrice += self.mainData[i].product.sku[self.mainData[i].skuIndex].price*self.mainData[i].count
+					if(self.mainData[i].sku){
+						self.totalPrice += self.mainData[i].product.sku[self.mainData[i].skuIndex].price*self.mainData[i].count
+					}else{
+						self.totalPrice += self.mainData[i].product.price*self.mainData[i].count
+					}
 				}
 				
 				self.totalPrice = parseFloat(self.totalPrice).toFixed(2)
@@ -225,14 +230,21 @@
 					shop_no:self.shopData.user_no
 				};
 				var orderList = []
+				console.log('addressData',self.addressData)
 				for (var i = 0; i < self.mainData.length; i++) {
-					orderList.push({sku_id:self.mainData[i].sku_id,count:self.mainData[i].count,data: data,
-					snap_address: self.addressData})
+					if(self.mainData[i].sku){
+						orderList.push({sku_id:self.mainData[i].sku_id,count:self.mainData[i].count,data: data,
+						snap_address: self.addressData})
+					}else{
+						orderList.push({product_id:self.mainData[i].product_id,count:self.mainData[i].count,data: data,
+						snap_address: self.addressData})
+					}
 				}
 				const callback = (user, res) => {
 					if(self.submitData.name){
 						self.submitData.name = user.nickName;
 					}
+					console.log('orderList',orderList,self.mainData)
 					self.addOrder(orderList)
 				};
 				self.$Utils.getAuthSetting(callback);
@@ -259,17 +271,26 @@
 				postData.parent = 1;
 				postData.tokenFuncName = 'getProjectToken';
 				postData.refreshToken = true;
+				console.log('postData',postData)
 				const callback = (res) => {
 					uni.setStorageSync('canClick', true);
+					console.log('购买信息',res)
 					if (res && res.solely_code == 100000) {
 						self.orderId = res.info.id;
 						var array = self.$Utils.getStorageArray('cartData');
 						for (var i = 0; i < orderList.length; i++) {
 							for (var j = 0; j < array.length; j++) {
-								if(orderList[i].sku_id == array[j].sku[array[j].skuIndex].id){
-									self.$Utils.delStorageArray('cartData', array[j], 'id');
+								if(self.array[j].sku){
+									if(orderList[i].sku_id == array[j].sku[array[j].skuIndex].id){
+										self.$Utils.delStorageArray('cartData', array[j], 'id');
+									}
+								}else{
+									if(orderList[i].id == array[j].id){
+										self.$Utils.delStorageArray('cartData', array[j], 'id');
+									}
 								}
 							}
+							self.$Utils.delStorageArray('cartData', orderList[i], 'id');
 						};
 						self.goPay()
 					} else {		

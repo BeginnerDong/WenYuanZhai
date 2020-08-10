@@ -117,6 +117,7 @@ export default {
 					wx.getLocation({
 					  type: 'gcj02',
 					  success: function (res) {
+						  console.log('ok')
 					    var latitude = res.latitude
 					    var longitude = res.longitude
 						/* var latitude = 33.0678400000
@@ -146,6 +147,35 @@ export default {
 					    }
 					  },
 					  fail(res) {
+						  console.log('fail',res)
+						  
+						var latitude = 34.180351
+						var longitude = 108.939529
+						if(type=='getGeocoder'){
+						    callback&&callback(res)
+						    return;
+						};
+						if(type=='reverseGeocoder'){
+						    wxMap.reverseGeocoder({
+						      location: {
+						        latitude: latitude,
+						        longitude: longitude
+						      },
+						      success: function (res) {
+						        callback&&callback(res.result)
+						      },
+						      fail(res){
+						        wx.showToast({
+						            title:'获取位置失败',
+						            icon:'none',
+						            duration:2000,
+						            mask:true,
+						        });
+						      }
+						    });  
+						}
+						
+						  
 					    wx.showToast({
 					        title:'获取经纬度失败',
 					        icon:'none',

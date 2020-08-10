@@ -27,7 +27,7 @@
 								<view class="specsBtn mr-1">{{item.sku&&item.sku[item.skuIndex]?item.sku[item.skuIndex].title:''}}</view>
 							</view>
 							<view class="d-flex j-sb a-center B-price">
-								<view class="d-flex a-center price">{{item.sku&&item.sku[item.skuIndex]?item.sku[item.skuIndex].price:''}}</view>
+								<view class="d-flex a-center price">{{item.sku&&item.sku[item.skuIndex]?item.sku[item.skuIndex].price:item.price}}</view>
 								<view class="d-flex j-end">
 									<view class="numBox d-flex">
 										<view class="btn" @click="counter(index,'-')">-</view>
@@ -116,6 +116,7 @@
 		onShow() {
 			const self = this;
 			self.mainData = self.$Utils.getStorageArray('cartData');
+			console.log('sku',self.mainData.sku)
 			console.log('self.mainData',self.mainData)
 			self.checkChooseAll();
 			self.countTotalPrice();
@@ -127,14 +128,20 @@
 			
 			pay(e) {
 				const self = this;
-				const orderList = [
-				];
+				const orderList = [];
 				for (var i = 0; i < self.mainData.length; i++) {
 					if (self.mainData[i].isSelect) {
-						orderList.push(
-							{sku_id:self.mainData[i].sku[self.mainData[i].skuIndex].id,count:self.mainData[i].count,
-							product:self.mainData[i],skuIndex:self.mainData[i].skuIndex},
-						);
+						if(self.mainData[i].sku){
+							orderList.push(
+								{sku_id:self.mainData[i].sku[self.mainData[i].skuIndex].id,count:self.mainData[i].count,
+								product:self.mainData[i],skuIndex:self.mainData[i].skuIndex},
+							);
+						}else{
+							orderList.push(
+								{product_id:self.mainData[i].id,count:self.mainData[i].count,
+								product:self.mainData[i],skuIndex:self.mainData[i].skuIndex},
+							);
+						}
 					};
 				};
 				if (orderList.length == 0) {
@@ -203,6 +210,7 @@
 									self.$Utils.delStorageArray('cartData', self.mainData[i], 'id');
 								}
 							};
+							self.countTotalPrice();
 							self.mainData = self.$Utils.getStorageArray('cartData');
 						} else if (res.cancel) {
 							console.log('用户点击取消');
@@ -233,10 +241,14 @@
 				
 				for (var i = 0; i < self.mainData.length; i++) {
 					if (self.mainData[i].isSelect) {
-						self.totalPrice += self.mainData[i].sku[self.mainData[i].skuIndex].price * self.mainData[i].count;
+						if(self.mainData[i].sku){
+							self.totalPrice += self.mainData[i].sku[self.mainData[i].skuIndex].price * self.mainData[i].count;
+						}else{
+							self.totalPrice += self.mainData[i].price * self.mainData[i].count;
+						}
 					};
 				};
-				console.log(self.totalPrice)
+				console.log('totalPrice',self.totalPrice)
 			},
 			
 			

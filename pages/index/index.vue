@@ -102,7 +102,8 @@
 			const self = this;
 			const callback = (res) => {
 				self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
-				self.$Utils.loadAll(['getUserData','getLocation','getLabelData','getSliderData'], self);
+				self.getLocation();
+				self.$Utils.loadAll(['getUserData','getLabelData','getSliderData'], self);
 			};
 			self.$Token.getProjectToken(callback, {
 				refreshToken: true
@@ -133,8 +134,10 @@
 				self.mainData[index].skuIndex = 0;
 				var array = self.$Utils.getStorageArray('cartData');
 				for (var i = 0; i < array.length; i++) {
-					if (array[i].sku[array[i].skuIndex].id == self.mainData[index].sku[0].id) {
-						var target = array[i]
+					if(array[i].sku){
+						if (array[i].sku[array[i].skuIndex].id == self.mainData[index].sku[0].id) {
+							var target = array[i]
+						}
 					}
 				}
 				if (target) {
@@ -157,9 +160,10 @@
 						self.userData = res.info.data[0]
 						var d = new Date();
 						var h = d.getHours();
-						if(h>uni.getStorageSync('user_info').thirdApp.start_time&&h<uni.getStorageSync('user_info').thirdApp.end_time){
+						if(h>=uni.getStorageSync('user_info').thirdApp.start_time&&h<uni.getStorageSync('user_info').thirdApp.end_time){
 							self.canBuy = true
 						}
+						console.log('hours',h)
 					};
 					self.$Utils.finishFunc('getUserData');
 				};
@@ -170,18 +174,19 @@
 				const self = this;
 				const callback = (res) => {
 					if (res) {
-						console.log('res', res)
-						/* if(res.authSetting){
+						if(res.authSetting){
 							self.data.is_show=true;
 							self.setData({
 								is_show:self.data.is_show
 							})
 							return
-						} */
+						}
 						self.city = res.formatted_addresses.recommend
-					};
+					}
+					console.log('res', res)
 					self.$Utils.finishFunc('getLocation');
 				};
+				
 				self.$Utils.getLocation('reverseGeocoder', callback);
 			},
 			
