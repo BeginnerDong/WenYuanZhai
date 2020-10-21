@@ -19,7 +19,7 @@
 					<view class="R_cont d-flex j-sb a-center">
 						<view class="pic">
 							<image :src="item.mainImg&&item.mainImg[0]?item.mainImg[0].url:''" mode=""></image>
-							<view class="imgTit text-white font-22 text-center avoidOverflow px-1">本商品由生灵商行专供</view>
+							<!-- <view class="imgTit text-white font-22 text-center avoidOverflow px-1">本商品由生灵商行专供</view> -->
 						</view>
 						<view class="infor">
 							<view class="tit avoidOverflow2">{{item.title}}</view>
@@ -248,6 +248,7 @@
 						}
 					};
 				};
+				self.totalPrice = parseFloat(self.totalPrice).toFixed(2)
 				console.log('totalPrice',self.totalPrice)
 			},
 			

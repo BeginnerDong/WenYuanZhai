@@ -62,7 +62,8 @@
 		
 		<view class="xqbotomBar pl-3">
 			<view class="d-flex a-center mr-3 font-26">总计<view class="price font-weight font-30">{{totalPrice}}</view></view>
-			<view class="payBtn main-bg-color text-white" style="width: 260rpx;" @click="zitiMsgShow">立即支付</view>
+			<button class="payBtn main-bg-color text-white"  style="width: 260rpx;margin: 0;font-size:15px;border-radius: 0;" 
+			open-type="getUserInfo"  @getuserinfo="zitiMsgShow">立即支付</button>
 		</view>
 		
 		<!-- 优惠券 -->
@@ -76,7 +77,7 @@
 			<view class="pt-1 d-flex j-center a-center mt-4 font-30">
 				<view class="TwoBtn border" @click="zitiMsgShow">取消付款</view>
 				<button class="TwoBtn on  main-text-color ml-4" style="margin: 0;margin-left: 40rpx;background-color: #fff;font-size:15px" 
-				open-type="getUserInfo"  @getuserinfo="Utils.stopMultiClick(submit)">确认付款</button>
+				 @click="Utils.stopMultiClick(message)">确认付款</button>
 			</view>
 		</view>
 
@@ -132,6 +133,25 @@
 		
 		methods: {
 			
+			message(){
+				const self = this;
+				 //self.goPay()
+				uni.setStorageSync('canClick', false);
+				wx.requestSubscribeMessage({
+				  tmplIds: ['u9W9Q5JWVBMrQ6b-J7prPjgGtip-Uau6jrUdYw6D7xg'],
+				  success (res) { 
+					  console.log(res)
+					  if(res){
+						  self.submit()
+					  }
+				  },
+				  fail(err) {    //失败
+				  					
+				  	self.submit()
+				  }
+				})
+			},
+			
 			getDefalutShop() {
 				const self = this;		
 				const postData = {};
@@ -166,18 +186,25 @@
 			
 			zitiMsgShow(){
 				const self = this;
-				if(JSON.stringify(self.shopData) == '{}'){
-					uni.setStorageSync('canClick', true);
-					self.$Utils.showToast('请选择自提门店','none')
-					return
+				const callback = (user, res) => {
+					if(JSON.stringify(self.shopData) == '{}'){
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast('请选择自提门店','none')
+						return
+					};
+					if(self.submitData.phone==''){
+						uni.setStorageSync('canClick', true);
+						self.$Utils.showToast('请填写收货人信息','none')
+						return
+					};
+					if(self.submitData.name){
+						self.submitData.name = user.nickName;
+					};
+					self.is_show = !self.is_show;
+					self.is_zitiMsgShow = !self.is_zitiMsgShow;
 				};
-				if(self.submitData.phone==''){
-					uni.setStorageSync('canClick', true);
-					self.$Utils.showToast('请填写收货人信息','none')
-					return
-				};
-				self.is_show = !self.is_show;
-				self.is_zitiMsgShow = !self.is_zitiMsgShow;
+				self.$Utils.getAuthSetting(callback);
+				
 			},
 			
 			counter(index, type) {
@@ -196,7 +223,7 @@
 				const self = this;
 				self.totalPrice = 0;
 				for (var i = 0; i < self.mainData.length; i++) {
-					if(self.mainData[i].sku){
+					if(self.mainData[i].sku_id>0){
 						self.totalPrice += self.mainData[i].product.sku[self.mainData[i].skuIndex].price*self.mainData[i].count
 					}else{
 						self.totalPrice += self.mainData[i].product.price*self.mainData[i].count
@@ -231,23 +258,21 @@
 				};
 				var orderList = []
 				console.log('addressData',self.addressData)
+				
 				for (var i = 0; i < self.mainData.length; i++) {
-					if(self.mainData[i].sku){
+					if(self.mainData[i].sku_id>0){
 						orderList.push({sku_id:self.mainData[i].sku_id,count:self.mainData[i].count,data: data,
 						snap_address: self.addressData})
 					}else{
+						console.log('1',self.mainData[i])
 						orderList.push({product_id:self.mainData[i].product_id,count:self.mainData[i].count,data: data,
 						snap_address: self.addressData})
 					}
 				}
-				const callback = (user, res) => {
-					if(self.submitData.name){
-						self.submitData.name = user.nickName;
-					}
-					console.log('orderList',orderList,self.mainData)
-					self.addOrder(orderList)
-				};
-				self.$Utils.getAuthSetting(callback);
+				
+				
+				console.log('orderList',orderList,self.mainData)
+				self.addOrder(orderList)
 			},
 			
 			addOrder(orderList) {
@@ -280,15 +305,16 @@
 						var array = self.$Utils.getStorageArray('cartData');
 						for (var i = 0; i < orderList.length; i++) {
 							for (var j = 0; j < array.length; j++) {
-								if(self.array[j].sku){
-									if(orderList[i].sku_id == array[j].sku[array[j].skuIndex].id){
-										self.$Utils.delStorageArray('cartData', array[j], 'id');
-									}
+								if(orderList[i].sku_id == array[j].sku[array[j].skuIndex].id){
+									self.$Utils.delStorageArray('cartData', array[j], 'id');
+								}
+								/* if(self.array[j].sku){
+									
 								}else{
 									if(orderList[i].id == array[j].id){
 										self.$Utils.delStorageArray('cartData', array[j], 'id');
 									}
-								}
+								} */
 							}
 							self.$Utils.delStorageArray('cartData', orderList[i], 'id');
 						};

@@ -1,6 +1,6 @@
 <template>
 	<view>
-		
+		<uni-notice-bar background-color="#222" color="#fff" single="true" scrollable="true" v-if="text!=''" :text="text"></uni-notice-bar>
 		<view class="homeHead position-relative">
 			<view class="px-3 py-3 d-flex text-white GpsAdrs a-start">
 				<view class="GpsIcon mr-1"><image src="../../static/images/home-icon.png" mode=""></image></view>
@@ -86,7 +86,9 @@
 </template>
 
 <script>
+	import uniNoticeBar from '@/components/uni-notice-bar/uni-notice-bar.vue'
 	export default {
+		components: {uniNoticeBar},
 		data() {
 			return {
 				Router:this.$Router,
@@ -95,7 +97,9 @@
 				labelData:[],
 				sliderData:{},
 				city:'',
-				canBuy:false
+				canBuy:false,
+				text:'',
+				
 			}
 		},
 		onLoad() {
@@ -103,7 +107,7 @@
 			const callback = (res) => {
 				self.paginate = self.$Utils.cloneForm(self.$AssetsConfig.paginate);
 				self.getLocation();
-				self.$Utils.loadAll(['getUserData','getLabelData','getSliderData'], self);
+				self.$Utils.loadAll(['getUserData','getLabelData','getSliderData','getNoticeData'], self);
 			};
 			self.$Token.getProjectToken(callback, {
 				refreshToken: true
@@ -122,6 +126,22 @@
 		
 		methods: {
 			
+			getNoticeData() {
+				const self = this;
+				const postData = {};
+				postData.searchItem = {
+					thirdapp_id: 2,
+					title:"首页广告"
+				};
+				const callback = (res) => {
+					if (res.info.data.length > 0) {
+						self.noticeData = res.info.data[0]
+						self.text = self.noticeData.description;
+					}
+					self.$Utils.finishFunc('getNoticeData')
+				};
+				self.$apis.labelGet(postData, callback);
+			},
 			
 			addCar(index){
 				const self = this;
@@ -219,6 +239,17 @@
 				};
 				postData.order = {
 					listorder: 'desc'
+				};
+				postData.getAfter = {
+					sku: {
+						tableName: 'Sku',
+						middleKey: 'product_no',
+						key: 'product_no',
+						condition: '=',
+						searchItem: {
+							status: 1
+						}
+					},
 				};
 				var callback = function(res) {
 					if (res.info.data.length > 0 && res.info.data[0]) {

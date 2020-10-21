@@ -357,7 +357,8 @@
 						self.mainData = res.info.data[0];
 						var d = new Date();
 						var h = d.getHours();
-						if (h > uni.getStorageSync('user_info').thirdApp.start_time && h < uni.getStorageSync('user_info').thirdApp.end_time) {
+						console.log('h',h)
+						if (h >= uni.getStorageSync('user_info').thirdApp.start_time && h < uni.getStorageSync('user_info').thirdApp.end_time) {
 							self.canBuy = true
 						};
 						const regex = new RegExp('<img', 'gi');
@@ -381,6 +382,11 @@
 					self.NoBuyShow();
 					return
 				};
+				if (self.mainData.sku.length==0) {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('该商品暂无可选规格', 'none');
+					return
+				};
 				self.orderList.push({
 					sku_id: self.mainData.sku[self.specsCurr].id,
 					count: 1,
@@ -402,6 +408,11 @@
 				if (!self.canBuy) {
 					uni.setStorageSync('canClick', true);
 					self.NoBuyShow();
+					return
+				};
+				if (self.mainData.sku.length==0) {
+					uni.setStorageSync('canClick', true);
+					self.$Utils.showToast('该商品暂无可选规格', 'none');
 					return
 				};
 				var obj = self.mainData;
